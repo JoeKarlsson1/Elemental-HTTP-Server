@@ -1,11 +1,9 @@
-var qs = require( 'querystring' );
-var fs = require( 'fs' );
 var getRequest = require('./get');
 var postRequest = require('./post');
 var putRequest = require('./put');
 var deleteRequest = require('./delete');
 
-module.exports = function( request, response ) {
+module.exports = ( request, response ) => {
 
   /*
     *  ## REQUEST ##

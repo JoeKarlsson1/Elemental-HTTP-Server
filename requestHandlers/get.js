@@ -1,36 +1,71 @@
-var qs = require( 'querystring' );
 var fs = require( 'fs' );
+var path = require( 'path' );
+var templateHelper = require( '../templates/templateHelper' )
+
 
 /*
   *  ## GET ##
   *  routing and default 404
 */
-module.exports = function( request, response ) {
+var getModule = module.exports = ( request, response ) => {
+  var numOfElements;
+  var elements;
+  var extName = path.extname(request.url);
+  console.log(extName)
+
   // default route setup to read index file
   if ( request.url === '/' || request.url === '/index.html' ) {
+    var extName = '.html';
 
-    // read template to construct new index file
-    fs.readFile('public/index.html', function (err, data) {
-      if (err) console.log( err );
+    // Get a list of all the files in the public directory
+    fs.readdir('public', ( err, files ) => {
+      if ( err ) console.log( err );
 
-      // end response with newly rendered function
-      response.writeHead(200, {
-                    'Content-Type' : 'text/html'
-                  });
-      response.end(data);
+      // Filter out all of the non-elemental html files
+      elements = files.filter( ( e, i, a ) => {
+        return (
+          e !== '.keep' &&
+          e !== '404.html' &&
+          e !== 'index.html' &&
+          e !== 'css'
+          )
+      })
 
+      numOfElements = elements.length;
+      console.log(numOfElements)
     });
 
-// if its not the default route
+    // read template to construct new index file
+    fs.readFile('templates/indexTemplate.html', ( err, template ) => {
+      if ( err ) console.log( err );
+
+      //call template helper function and create new index.html
+      var renderedIndex = templateHelper.index( template, numOfElements, elements );
+
+      // write the newly created index.html template
+      fs.writeFile( './public/index.html', renderedIndex, ( err ) => {
+        if ( err ) console.log( err );
+
+        // end response with newly rendered function
+
+        response.writeHead( 200, {
+          'Content-Type' : 'text/html'
+        } );
+        response.end( renderedIndex );
+
+      });
+    })
+
+  // if its not the default route
   } else {
 
     // check if the file exists within our public folder
-    fs.exists('public' + request.url, function (exists) {
+    fs.exists( 'public' + request.url, ( exists ) => {
 
       // if it exists, read the file
-      if (exists) {
-        fs.readFile('public' + request.url, function(err, data) {
-          if (err) console.log( err );
+      if ( exists ) {
+        fs.readFile( 'public' + request.url, ( err, data ) => {
+          if ( err ) console.log( err );
 
           //resonse head OK
           response.writeHead(200);
@@ -39,13 +74,13 @@ module.exports = function( request, response ) {
 
         // if it does not, read the 404 file and write a 404 response in the header
       } else {
-        fs.readFile('public/404.html', function(err, data) {
+        fs.readFile('public/404.html', (err, data) => {
           if (err) console.log( err );
 
           // response head not found
           response.writeHead(404, {
-                      'Content-Type' : 'text/html'
-                    });
+            'Content-Type' : 'text/html'
+          });
           response.end(data);
         });
       }

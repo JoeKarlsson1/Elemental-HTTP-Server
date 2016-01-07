@@ -2,10 +2,12 @@
 
 ### Basic HTTP Server that reads from and writes to fs
 
+To run this app ```nodemon --harmony server.js```
+
 ## Security Notice !!!
 
-This server will expose some serious security vulnerabilities.  
-Do not run this in production, or leave it running on your local environment that is accessible from the public network.  
+This server will expose some serious security vulnerabilities.
+Do not run this in production, or leave it running on your local environment that is accessible from the public network.
 ## Resources
 
 - [NodeJS http module](https://nodejs.org/api/http.html)
@@ -37,9 +39,9 @@ _see the routing table below_
 
 ## POST Requests
 
-An HTTP Client can issue POST Requests to a specific route identified by the uri `/elements`.  
-The POST Body will contain content of type `application/x-www-form-urlencoded`.  
-The HTTP Server will parse the form data, and save a file in the designated public directory, based on that content.  
+An HTTP Client can issue POST Requests to a specific route identified by the uri `/elements`.
+The POST Body will contain content of type `application/x-www-form-urlencoded`.
+The HTTP Server will parse the form data, and save a file in the designated public directory, based on that content.
 The form data will be:
 
 | Name                | Content                                                             |
@@ -55,7 +57,7 @@ _see the routing table below_
 
 Parse the request body, and write a new file (if it does not exist), to the public directory, named after the element's name, appended with the `html` file extension.
 
-using the above example POST data, [this file](https://gist.github.com/theRemix/1da546c72ac66844617d) will be saved to `./public/boron.html`  
+using the above example POST data, [this file](https://gist.github.com/theRemix/1da546c72ac66844617d) will be saved to `./public/boron.html`
 _notice the areas of **dynamic data**, title tag, h1 tag, h2 tag, etc._
 
 In other words, when a client performs a POST request with the 4 required post data fields, a new file will be created in a valid html5 format, containing the dynamic content from the post data fields.
@@ -141,10 +143,10 @@ Check if the `authorization` header is present in the request, if it is not, req
 
 ![basic auth](screenshots/basic_auth.png)
 
-If the `authorization` header is present, decode and compare against your own internal valid login credentials.  
+If the `authorization` header is present, decode and compare against your own internal valid login credentials.
 To decode the `authorization` header, extract the value of the `authorization` header by removing the first part of the authorization header value.
 
-Example authorization header value:  
+Example authorization header value:
 ```
 Basic Y2hhcmxlczoxMjM0NQ==
       ^------------------^--> only need this string
@@ -158,7 +160,7 @@ var base64Buffer = new Buffer(encodedString, 'base64');
 var decodedString = base64Buffer.toString();
 ```
 
-**decodedString** will be the username password pair separated by a colon `:`  
+**decodedString** will be the username password pair separated by a colon `:`
 ```
 console.log(decodedString);
 // username:password
@@ -166,7 +168,7 @@ console.log(decodedString);
 
 extract the username and password from the decodedString, then compare against some stored username and password stored somewhere in memory.
 
-**Security Consideration Notice**  
+**Security Consideration Notice**
 _You will be committing your code to a public github repository, where anyone can see your source code which will contain your secret username and password... so use caution and set it to some fake test credentials__
 
 If the username and password match your secret values, allow the client to perform their requested operation.
