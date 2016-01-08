@@ -1,15 +1,17 @@
-var qs = require( 'querystring' );
-var fs = require( 'fs' );
-var templateHelper = require( '../templates/templateHelper' );
+'use strict'
+
+const qs = require( 'querystring' );
+const fs = require( 'fs' );
+const templateHelper = require( '../templates/templateHelper' );
 
 /*
   *  ## PUT ##
   *  Parses in data with some validation checks
 */
-var putModule = module.exports = ( request, response ) => {
+let putModule = module.exports = ( request, response ) => {
 
   // clear dataBuffer variable
-  var dataBuffer = '';
+  let dataBuffer = '';
 
   // on data entry, store it in the dataBuffer var
   request.on('data', (data) => {
@@ -20,7 +22,7 @@ var putModule = module.exports = ( request, response ) => {
   request.on('end', () => {
 
     // parse our object and store into variable
-    var data = qs.parse( dataBuffer.toString() );
+    let data = qs.parse( dataBuffer.toString() );
 
     // check if the url exists in our file system
     fs.exists('public' + request.url, (exists) => {
@@ -32,7 +34,7 @@ var putModule = module.exports = ( request, response ) => {
         fs.readFile('templates/elementTemplate.html', (err, template) => {
 
           // use helper function to fill out data in template file
-          renderedElement = templateHelper.element(template, data.elementName, data.elementSymbol, data.elementAtomicNumber, data.elementDescription);
+          let renderedElement = templateHelper.element(template, data.elementName, data.elementSymbol, data.elementAtomicNumber, data.elementDescription);
 
           // write our template file over the old file
           fs.writeFile('./public' + request.url, renderedElement, (err) => {

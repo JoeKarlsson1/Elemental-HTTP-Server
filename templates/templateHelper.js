@@ -1,4 +1,6 @@
-var templateHelper = {
+'use strict'
+
+const templateHelper = {
   /*
     * ## POST HELPERS ##
     * function to write dynamic HTML based on data.
@@ -23,9 +25,9 @@ var templateHelper = {
   },
 
   elementListBuilder : ( elements ) => {
-    var linkBuilder = '';
+    let linkBuilder = '';
 
-    for ( var i = elements.length - 1; i >= 0; i-- ) {
+    for ( let i = elements.length - 1; i >= 0; i-- ) {
       linkBuilder += '<li><a href="/{{ link }}">{{ elementName }}</a></li>'
       .replace( '{{ link }}', elements[i] )
       .replace( '{{ elementName }}', elements[i].replace('.html', '') );

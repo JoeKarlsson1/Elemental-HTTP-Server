@@ -1,12 +1,14 @@
-var qs = require( 'querystring' );
-var fs = require( 'fs' );
-var templateHelper = require( '../templates/templateHelper' );
+'use strict'
+
+const qs = require( 'querystring' );
+const fs = require( 'fs' );
+const templateHelper = require( '../templates/templateHelper' );
 
 /*
   *  ## DELETE ##
   *   utilizes fs.unlink to remove a file on a DELETE request
 */
-var deleteModule = module.exports = ( request, response ) => {
+const deleteModule = module.exports = ( request, response ) => {
   // check if the file exists in the system
   fs.exists( './public' + request.url, ( exists ) => {
 

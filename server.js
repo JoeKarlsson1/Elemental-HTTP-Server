@@ -1,7 +1,9 @@
-var http = require('http');
+'use strict'
 
-var PORT = 3000;
+const http = require('http');
 
-var requestHandler = require('./requestHandlers/requestHandler');
+const PORT = 3000;
+
+const requestHandler = require('./requestHandlers/requestHandler');
 
 http.createServer(requestHandler).listen(PORT);

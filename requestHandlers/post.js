@@ -1,6 +1,8 @@
-var qs = require( 'querystring' );
-var fs = require( 'fs' );
-var templateHelper = require( '../templates/templateHelper' )
+'use strict'
+
+const qs = require( 'querystring' );
+const fs = require( 'fs' );
+const templateHelper = require( '../templates/templateHelper' )
 
 /*
   *  ## POST ##
@@ -10,9 +12,9 @@ var templateHelper = require( '../templates/templateHelper' )
   *   writes it, if it does not.
   *
 */
-var postModule = module.exports = ( request, response ) => {
-  var elements;
-  var dataBuffer = '';
+const postModule = module.exports = ( request, response ) => {
+  let elements;
+  let dataBuffer = '';
 
   // if the client is on the correct uri
   if ( request.url === '/elements' ) {
@@ -26,7 +28,7 @@ var postModule = module.exports = ( request, response ) => {
     request.on( 'end', () => {
 
       // take our client data and parse it from the buffer
-      var data = qs.parse( dataBuffer.toString() );
+      let data = qs.parse( dataBuffer.toString() );
 
       // validation for correct data
       if (typeof data === 'object' && data.elementName !== undefined) {
@@ -41,7 +43,7 @@ var postModule = module.exports = ( request, response ) => {
             fs.readFile('templates/elementTemplate.html', ( err, template ) => {
 
               //call template helper function and create new element page
-              var renderedElement = templateHelper.element( template, data.elementName, data.elementSymbol, data.elementAtomicNumber, data.elementDescription );
+              const renderedElement = templateHelper.element( template, data.elementName, data.elementSymbol, data.elementAtomicNumber, data.elementDescription );
 
               // write the newly created template
               fs.writeFile( './public/' + data.elementName + '.html', renderedElement, (err ) => {
