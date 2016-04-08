@@ -1,40 +1,36 @@
 'use strict'
+'use strict'
 
-const templateHelper = {
-  /*
-    * ## POST HELPERS ##
-    * function to write dynamic HTML based on data.
-    *
-  */
+/*
+  * ## POST HELPERS ##
+  * function to write dynamic HTML based on data.
+  *
+*/
 
-  element : ( template, name, symbol, number, description ) => {
+module.exports.element = ( template, name, symbol, number, description ) => {
 
-    return template.toString()
-          .replace( '{{ elementName }}', name )
-          .replace( '{{ elementName }}', name )
-          .replace( '{{ elementSymbol }}', symbol )
-          .replace( '{{ elementAtomicNumber }}', number )
-          .replace( '{{ elementDescription }}', description );
-  },
+  return template.toString()
+      .replace(/{{ elementName }}/gi, name)
+      .replace(/{{ elementSymbol }}/gi, symbol)
+      .replace(/{{ elementAtomicNumber }}/gi, number)
+      .replace(/{{ elementDescription }}/gi, desc);
+}
 
-  index : ( template, numOfElements, elements ) => {
+module.exports.index = ( template, numOfElements, elements ) => {
+  console.log(this, 'this')
 
-    return template.toString()
-          .replace( '{{ numberOfElements }}', numOfElements )
-          .replace( '{{ elementLinks }}', this.elementListBuilder(elements) )
-  },
+  return template.toString()
+        .replace( '{{ numberOfElements }}', numOfElements )
+        .replace( '{{ elementLinks }}', this.elementListBuilder(elements) )
+}
 
-  elementListBuilder : ( elements ) => {
-    let linkBuilder = '';
+module.exports.elementListBuilder = ( elements ) => {
+  let linkBuilder = '';
 
-    for ( let i = elements.length - 1; i >= 0; i-- ) {
-      linkBuilder += '<li><a href="/{{ link }}">{{ elementName }}</a></li>'
-      .replace( '{{ link }}', elements[i] )
-      .replace( '{{ elementName }}', elements[i].replace('.html', '') );
-    };
-    return linkBuilder;
-  }
-
-};
-
-module.exports = templateHelper;
+  for ( let i = elements.length - 1; i >= 0; i-- ) {
+    linkBuilder += '<li><a href="/{{ link }}">{{ elementName }}</a></li>'
+    .replace( '{{ link }}', elements[i] )
+    .replace( '{{ elementName }}', elements[i].replace('.html', '') );
+  };
+  return linkBuilder;
+}

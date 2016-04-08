@@ -1,29 +1,28 @@
-var getRequest = require('./get');
-var postRequest = require('./post');
-var putRequest = require('./put');
-var deleteRequest = require('./delete');
+'use strict'
+
+const getHandler = require('./get');
+const postHandler = require('./post');
+const putHandler = require('./put');
+const deleteHandler = require('./delete');
 
 module.exports = ( request, response ) => {
+  console.log('server started');
 
-  /*
-    *  ## REQUEST ##
-    *  switch statement for different request methods
-  */
-  switch (request.method) {
-
-    case 'GET':
-      getRequest(request, response);
+  // Switch to handle server HTTP requests
+  switch ( request.method ) {
+    case 'GET' :
+      getHandler( request, response );
       break;
-    case 'POST':
-      postRequest(request, response);
+    case 'POST' :
+      postHandler( request, response );
       break;
     case 'PUT':
-      putRequest(request, response);
+      putHandler( request, response );
       break;
     case 'DELETE':
-      deleteRequest(request, response);
+      deleteHandler( request, response );
       break;
     default:
-      console.log('Invalid request method')
+      console.log('Invalid request method');
   }
-};
+}

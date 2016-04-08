@@ -1,90 +1,52 @@
 'use strict'
 
-const qs = require( 'querystring' );
-const fs = require( 'fs' );
-const templateHelper = require( '../templates/templateHelper' )
+const qs = require('querystring');
+const fs = require('fs');
+const templateHelper = require('../templates/templateHelper.js');
 
-/*
-  *  ## POST ##
-  *   parses in data with some
-  *   validation checks. Then,
-  *   checks if the files exists, and
-  *   writes it, if it does not.
-  *
-*/
-const postModule = module.exports = ( request, response ) => {
-  let elements;
+/**
+ * POST creates a new file if one does not already exist
+ * @param  {[type]} request  [description]
+ * @param  {[type]} response [description]
+ * @return {[type]}          [description]
+ */
+module.exports = ( request, response ) => {
   let dataBuffer = '';
 
-  // if the client is on the correct uri
-  if ( request.url === '/elements' ) {
+  //
+  request.on( 'data', ( data ) => {
+    dataBuffer += data;
+  });
 
-    // on data, store the data in our variable
-    request.on( 'data', ( data ) => {
-      dataBuffer += data;
-    } );
+  // Wait for the end of the request then ...
+  request.on('end', () => {
 
-    // on end of request then
-    request.on( 'end', () => {
+    //parse through the databuffer and save to data
+    let data = qs.parse( dataBuffer.toString());
 
-      // take our client data and parse it from the buffer
-      let data = qs.parse( dataBuffer.toString() );
+    //read in elemental template/chipotle file
+    fs.readFile('templates/elementTemplate.html', ( err, template) => {
+      if (err) console.log(err);
 
-      // validation for correct data
-      if (typeof data === 'object' && data.elementName !== undefined) {
+      //invoke template to render elemental with correct data
+      let renderedElement = templateHelper.element(
+        template,
+        data.elementName,
+        data.elementSymbol,
+        data.elementAtomicNumber,
+        data.elementDescription)
 
-        // check if the file has already been created
-        fs.exists('public/' + data.elementName + '.html', ( exists ) => {
+      fs.writeFile( './public/' + data.elementName.toLowerCase() + '.html', renderedElement, ( err ) => {
+        if (err) console.log(err);
 
-          // if it doesnt, write the file
-          if (!exists) {
+        //write a response back to client if successful
+        response.writeHead( 200, {
+          'Content-type' : 'application/json'
+        })
+        response.end(JSON.stringify({ 'success' : true }))
+      } );
 
-            // read template file
-            fs.readFile('templates/elementTemplate.html', ( err, template ) => {
+    })
 
-              //call template helper function and create new element page
-              const renderedElement = templateHelper.element( template, data.elementName, data.elementSymbol, data.elementAtomicNumber, data.elementDescription );
-
-              // write the newly created template
-              fs.writeFile( './public/' + data.elementName + '.html', renderedElement, (err ) => {
-                if ( err ) console.log( err );
-
-                // write to head successful
-                response.writeHead(200, {
-                      'Content-Type' : 'application/json'
-                    });
-                response.end( JSON.stringify( { 'success' : true } ) );
-              });
-
-            });
-
-          } else {
-
-            // error handling if file exists already
-            response.writeHead(303, {
-                  'Content-Type' : 'application/json'
-                });
-            response.end(JSON.stringify({ 'found' : 'resource /' + data.elementName + '.html already exists.' } ));
-          }
-        });
-      } else {
-
-        // error handling if no, or bad data entered on POST
-        response.writeHead(406, {
-              'Content-Type' : 'application/json'
-            });
-        response.end(JSON.stringify({ 'error' : 'invalid input type on POST' }));
-      }
-    });
-  } else {
-
-    // error handling if on the wrong uri for POST
-    response.writeHead(403, {
-          'Content-Type' : 'application/json'
-        });
-    response.end(JSON.stringify({ 'error' : 'POST requests should be made on the /elements uri' }));
-  }
-
-  // end ## POST ##
-
+  })
 }

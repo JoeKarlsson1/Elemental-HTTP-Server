@@ -2,7 +2,7 @@
 
 const fs = require( 'fs' );
 const path = require( 'path' );
-const templateHelper = require( '../templates/templateHelper' )
+const templateHelper = require( '../templates/templateHelper' );
 
 /*
   *  ## GET ##
@@ -22,43 +22,38 @@ var getModule = module.exports = ( request, response ) => {
   }
 
   // default route setup to read index file
+
   if ( request.url === '/' || request.url === '/index.html' ) {
-    extName = '.html';
+    //get an array of all the elements
+    fs.readdir( 'public/', ( err, files ) => {
+      if ( err) console.log( err );
 
-    // Get a list of all the files in the public directory
-    fs.readdir('public', ( err, files ) => {
-      if ( err ) console.log( err );
-
-      // Filter out all of the non-elemental html files
-      elements = files.filter( ( e, i, a ) => {
+      // filter out files in public that are not elemental files
+      let elementsArr = files.filter( (curr, index, array ) => {
         return (
-          e !== '.keep' &&
-          e !== '404.html' &&
-          e !== 'index.html' &&
-          e !== 'css'
-          )
+          curr !== '.keep' &&
+          curr !== '404.html' &&
+          curr !== 'css' &&
+          curr !== 'index.html'
+        )
       })
-      numOfElements = elements.length;
-    });
 
-    // read template to construct new index file
-    fs.readFile('templates/indexTemplate.html', ( err, template ) => {
-      if ( err ) console.log( err );
+      fs.readFile( 'templates/indexTemplate.html', ( err, template) => {
+        if (err) console.log( err );
+        var renderedIndex = templateHelper.index( template, elementsArr );
 
-      //call template helper function and create new index.html
-      const renderedIndex = templateHelper.index( template, numOfElements, elements );
+        fs.writeFile('public/index.html', renderedIndex, (err) => {
+          if(err) console.log(err);
+          //resonse head OK
+          response.writeHead(200, {
+            'Content-Type' : 'text/' + extName
+          });
+          response.end(renderedIndex);
 
-      // write the newly created index.html template
-      fs.writeFile( './public/index.html', renderedIndex, ( err ) => {
-        if ( err ) console.log( err );
+        });
+      } )
 
-        // end response with newly rendered function
-        response.writeHead( 200, {
-          'Content-Type' : 'text/html'
-        } );
-        response.end( renderedIndex );
 
-      });
     })
 
   // if its not the default route
