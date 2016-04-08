@@ -40,10 +40,11 @@ var getModule = module.exports = ( request, response ) => {
 
       fs.readFile( 'templates/indexTemplate.html', ( err, template) => {
         if (err) console.log( err );
-        var renderedIndex = templateHelper.index( template, elementsArr );
+        var renderedIndex = templateHelper.index( template, elementsArr.length, elementsArr );
 
         fs.writeFile('public/index.html', renderedIndex, (err) => {
-          if(err) console.log(err);
+          if (err) console.log(err);
+
           //resonse head OK
           response.writeHead(200, {
             'Content-Type' : 'text/' + extName
@@ -52,7 +53,6 @@ var getModule = module.exports = ( request, response ) => {
 
         });
       } )
-
 
     })
 

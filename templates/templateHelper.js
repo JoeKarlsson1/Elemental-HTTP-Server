@@ -17,7 +17,6 @@ module.exports.element = ( template, name, symbol, number, description ) => {
 }
 
 module.exports.index = ( template, numOfElements, elements ) => {
-  console.log(this, 'this')
 
   return template.toString()
         .replace( '{{ numberOfElements }}', numOfElements )
