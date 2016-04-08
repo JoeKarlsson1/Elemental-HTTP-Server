@@ -2,7 +2,7 @@
 
 const fs = require( 'fs' );
 const path = require( 'path' );
-const templateHelper = require( '../templates/templateHelper' )
+const templateHelper = require( '../templates/templateHelper' );
 
 /*
   *  ## GET ##
@@ -46,6 +46,7 @@ var getModule = module.exports = ( request, response ) => {
       if ( err ) console.log( err );
 
       //call template helper function and create new index.html
+      console.log(templateHelper, 'TH')
       const renderedIndex = templateHelper.index( template, numOfElements, elements );
 
       // write the newly created index.html template
